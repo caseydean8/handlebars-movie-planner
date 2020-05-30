@@ -30,22 +30,42 @@ connection.connect((err) => {
 });
 
 // Render index.html with movie data
-app.get('/', (req, res) => {
-  connection.query('select * from movies', (err, data) => {
+app.get("/", (req, res) => {
+  connection.query("select * from movies", (err, data) => {
     if (err) return res.status(500).end();
     res.render("index", { movies: data });
   });
 });
 
 // Post new movie to database
-app.post('/api/movies', (req, res) => {
-  connection.query('insert into movies (movie) values (?)', [req.body.movie], (err, result) => {
-    if (err) return res.status(500).end();
+app.post("/api/movies", (req, res) => {
+  connection.query(
+    "insert into movies (movie) values (?)",
+    [req.body.movie],
+    (err, result) => {
+      if (err) return res.status(500).end();
 
-    res.json({ id: result.insertId });
-    console.log({ id: result.insertId });
-  })
-})
+      res.json({ id: result.insertId });
+      console.log({ id: result.insertId });
+    }
+  );
+});
 
+// Update movie
+app.put("/api/movies/:id", (req, res) => {
+  console.log(req.body.movie, req.params.id);
+  connection.query(
+    "UPDATE movies SET movie = ? WHERE id = ?",
+    [req.body.movie, req.params.id],
+    (err, result) => {
+      if (err) {
+        return res.status(500).end();
+      } else if (result.changedRows === 0) {
+        return res.status(404).end();
+      }
+      res.status(200).end();
+    }
+  );
+});
 
 app.listen(PORT, () => console.log(`Listening on http://localhost:${PORT}`));
