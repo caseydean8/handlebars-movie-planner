@@ -29,11 +29,23 @@ connection.connect((err) => {
   console.log(`connected as id ${connection.threadId}`);
 });
 
+// Render index.html with movie data
 app.get('/', (req, res) => {
   connection.query('select * from movies', (err, data) => {
     if (err) return res.status(500).end();
     res.render("index", { movies: data });
   });
 });
+
+// Post new movie to database
+app.post('/api/movies', (req, res) => {
+  connection.query('insert into movies (movie) values (?)', [req.body.movie], (err, result) => {
+    if (err) return res.status(500).end();
+
+    res.json({ id: result.insertId });
+    console.log({ id: result.insertId });
+  })
+})
+
 
 app.listen(PORT, () => console.log(`Listening on http://localhost:${PORT}`));

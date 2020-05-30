@@ -55,6 +55,7 @@
     var newmovie = {
       movie: $("#createmovie [name=movie]").val().trim()
     };
+    {{!-- console.log(movie); --}}
 
     // Send the POST request.
     $.ajax("/api/movies", {
