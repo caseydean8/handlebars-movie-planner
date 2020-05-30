@@ -68,4 +68,13 @@ app.put("/api/movies/:id", (req, res) => {
   );
 });
 
+// Delete movie from database
+app.delete('/api/movies/:id', (req, res) => {
+  connection.query('delete from movies where id = ?', [req.params.id], (err, result) => {
+    if (err) return res.status(500).end();
+    if (!result.affectedRows) return res.status(404).end();
+    res.status(200).end();
+  })
+})
+
 app.listen(PORT, () => console.log(`Listening on http://localhost:${PORT}`));
